@@ -13,32 +13,48 @@ namespace StockManagement.Stock
         protected int id;
         protected string name = string.Empty;
         protected string? description;
-        protected UnitType unitType;
 
         //Stock
         protected int maxStock = 0;
-        protected int currentStock;
-        protected bool isBelowStockThreshold = false;
 
         //Get and Set
         public int Id { get { return id; } set { id = value; } } 
-        public string Name { get { return name; } set { name = value; } }
-        public string Description { get { return description; } set { description = value; } }
-        public int MaxStock { get {  return maxStock; } set {  maxStock = value; } }
-        public int CurrentStock { get { return currentStock; } set {  currentStock = value; } }
+        public string Name { get { return name; } 
+            set 
+            {
+                name = value.Length > 50 ? value[..50] : value;
+            } 
+        }
+        public string? Description { get { return description; } 
+            set 
+            { 
+                if(value == null)
+                {
+                    description = string.Empty;
+                }
+                else
+                {
+                    description = value.Length > 250 ? value[..250] : value;
+                }
+            } 
+        }
+        public int CurrentStock { get; private set; }
+        public bool IsBelowStockThreshold { get; private set; }
+        public UnitType UnitType { get; set;}
 
-        public Product() 
+        public Product(int id, string name) 
         {
-            
+            Id = id;
+            Name = name;
         }
 
         //Methods
         public void UseProduct(int items)
         {
-            if(items <= currentStock)
+            if(items <= CurrentStock)
             {
                 //use the items
-                currentStock -= items;
+                CurrentStock -= items;
                 UpdateLowStock();
                 Log($"Amount in stock updated. Now {CurrentStock} {Name} in stock");
             }
@@ -60,7 +76,7 @@ namespace StockManagement.Stock
             //Todo: add price here too
             sb.Append($"{Id} {Name} \n{Description}\n{CurrentStock} item(s) in stock.");
 
-            if( isBelowStockThreshold )
+            if( IsBelowStockThreshold )
             {
                 sb.Append("\n!!STOCK LOW!!");
             }
@@ -76,9 +92,9 @@ namespace StockManagement.Stock
 
         private void UpdateLowStock()
         {
-            if(currentStock < 10)//For now a fixed value
+            if(CurrentStock < 10)//For now a fixed value
             {
-                isBelowStockThreshold = true;
+                IsBelowStockThreshold = true;
             }
         }
 
