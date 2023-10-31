@@ -1,5 +1,4 @@
-﻿
-namespace StockManagement
+﻿namespace StockManagement.Domain
 {
     public class Program
     {
