@@ -17,62 +17,6 @@ namespace StockManagement.Domain
 
         public static List<Order> orders = new List<Order>();
         public static List<Product> inventory = new List<Product>();
-        
-        internal static void InitializeStock() //Mock implementation
-        {
-            Product p1 = new(1, "Sugar", "Lorem ipsum", new Price() 
-            { 
-                ItemPrice = 
-                  10, 
-                Currency = Currency.Euro
-            }, UnitType.PerKg, 100);
-            
-            Product p2 = new(2, "Cake Decorations", "Lorem ipsum", new Price()
-            {
-                ItemPrice =
-                  8,
-                Currency = Currency.Euro
-            }, UnitType.PerItem, 20);
-            
-            Product p3 = new(3, "Strawberry", "Lorem ipsum", new Price()
-            {
-                ItemPrice =
-                  3,
-                Currency = Currency.Euro
-            }, UnitType.PerBox, 10);
-
-            inventory.Add(p1);
-            inventory.Add(p2);
-            inventory.Add(p3);
-
-            /*
-            try
-            {
-                string path = $"{directory}{productsFile}";
-                if(File.Exists(path))
-                {
-                    inventory.Clear();
-
-                    string[] stockAsString = File.ReadAllLines(path);
-                    for (int i = 0; i < stockAsString.Length; i++)
-                    {
-                        string[] stockSplits = stockAsString[i].Split(';');
-                        string id = stockSplits[0].Substring(stockSplits[0].IndexOf(':') + 1);
-                        string name = stockSplits[1].Substring(stockSplits[1].IndexOf(':') + 1);
-                        string description = stockSplits[2].Substring(stockSplits[2].IndexOf(':') + 1);
-                        string price = stockSplits[3].Substring(stockSplits[3].IndexOf(':') + 1);
-                        string unitType = stockSplits[4].Substring(stockSplits[4].IndexOf(':') + 1);
-                        string maxStock = stockSplits[5].Substring(stockSplits[5].IndexOf(':') + 1);
-
-                        Product product = null;
-
-                        
-                    }
-
-                }
-                */
-        
-        }
 
         public static void WelcomeText()
         {
@@ -136,6 +80,62 @@ namespace StockManagement.Domain
 
         }
 
+        internal static void InitializeStock() //Mock implementation
+        {
+            Product p1 = new(1, "Sugar", "Lorem ipsum", new Price() 
+            { 
+                ItemPrice = 
+                  10, 
+                Currency = Currency.Euro
+            }, UnitType.PerKg, 100);
+            
+            Product p2 = new(2, "Cake Decorations", "Lorem ipsum", new Price()
+            {
+                ItemPrice =
+                  8,
+                Currency = Currency.Euro
+            }, UnitType.PerItem, 20);
+            
+            Product p3 = new(3, "Strawberry", "Lorem ipsum", new Price()
+            {
+                ItemPrice =
+                  3,
+                Currency = Currency.Euro
+            }, UnitType.PerBox, 10);
+
+            inventory.Add(p1);
+            inventory.Add(p2);
+            inventory.Add(p3);
+
+            /*
+            try
+            {
+                string path = $"{directory}{productsFile}";
+                if(File.Exists(path))
+                {
+                    inventory.Clear();
+
+                    string[] stockAsString = File.ReadAllLines(path);
+                    for (int i = 0; i < stockAsString.Length; i++)
+                    {
+                        string[] stockSplits = stockAsString[i].Split(';');
+                        string id = stockSplits[0].Substring(stockSplits[0].IndexOf(':') + 1);
+                        string name = stockSplits[1].Substring(stockSplits[1].IndexOf(':') + 1);
+                        string description = stockSplits[2].Substring(stockSplits[2].IndexOf(':') + 1);
+                        string price = stockSplits[3].Substring(stockSplits[3].IndexOf(':') + 1);
+                        string unitType = stockSplits[4].Substring(stockSplits[4].IndexOf(':') + 1);
+                        string maxStock = stockSplits[5].Substring(stockSplits[5].IndexOf(':') + 1);
+
+                        Product product = null;
+
+                        
+                    }
+
+                }
+                */
+        
+        }
+
         private static void SaveAllData()
         {
             throw new NotImplementedException();
@@ -143,7 +143,38 @@ namespace StockManagement.Domain
 
         private static void ShowSettingsMenu()
         {
-            throw new NotImplementedException();
+            string? userSelection = string.Empty;
+
+            do
+            {
+                Console.ResetColor();
+                Console.Clear();
+                Console.WriteLine("************");
+                Console.WriteLine("* Settings *");
+                Console.WriteLine("************");
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("What do you want to do?");
+                Console.ResetColor();
+
+                Console.WriteLine("\n1: Change stock threshold");
+                Console.WriteLine("\n0: Back to main menu");
+
+                Console.Write("Your selection");
+                userSelection = Console.ReadLine();
+
+                switch (userSelection)
+                {
+                    case "1":
+                        ShowChangeStockThreshold();
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input! Please try again.");
+                        break;
+                }
+
+            } while (userSelection != "0");
         }
 
         private static void ShowOrderManagementMenu()
@@ -184,7 +215,43 @@ namespace StockManagement.Domain
 
         private static void ShowAddNewOrder()
         {
-            throw new NotImplementedException();
+            Order newOrder = new Order();
+            string? selectedProductId = string.Empty;
+
+            Console.ForegroundColor= ConsoleColor.Yellow;
+            Console.WriteLine("Creating new order");
+            Console.ResetColor();
+
+            do
+            {
+                ShowAllProductsOverview();
+
+                Console.WriteLine("Which product do you want to order? " +
+                    "(\nenter 0 to stop adding new products to the order)");
+
+                Console.Write("Enter the ID of the product: ");
+                selectedProductId = Console.ReadLine();
+
+                if(selectedProductId != "0")
+                {
+                    Product? selectedProduct = inventory.Where
+                        (p => p.Id == int.Parse(selectedProductId)).FirstOrDefault();
+
+                    if(selectedProduct != null)
+                    {
+                        Console.Write("How many do you want to order?: ");
+                        int amountOrdered = int.Parse(Console.ReadLine() ?? "0");
+
+                        OrderItem orderItem = new OrderItem
+                        {
+                            ProductId = selectedProduct.Id,
+                            ProductName = selectedProduct.Name,
+                            AmountOrdered = amountOrdered
+                        };
+                    }
+                }
+
+            } while (selectedProductId != "0");
         }
 
         private static void ShowInventoryManagementMenu()
