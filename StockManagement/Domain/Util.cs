@@ -12,9 +12,6 @@ namespace StockManagement.Domain
 {
     internal class Util
     {
-        private static string directory = @"C:\Users\marti\source\repos\StockManagement\StockManagement\Domain\Data\";
-        private static string productsFile = "products.txt";
-
         public static List<Order> orders = new List<Order>();
         public static List<Product> inventory = new List<Product>();
 
@@ -82,58 +79,16 @@ namespace StockManagement.Domain
 
         internal static void InitializeStock() //Mock implementation
         {
-            Product p1 = new(1, "Sugar", "Lorem ipsum", new Price() 
-            { 
-                ItemPrice = 
-                  10, 
-                Currency = Currency.Euro
-            }, UnitType.PerKg, 100);
-            
-            Product p2 = new(2, "Cake Decorations", "Lorem ipsum", new Price()
-            {
-                ItemPrice =
-                  8,
-                Currency = Currency.Euro
-            }, UnitType.PerItem, 20);
-            
-            Product p3 = new(3, "Strawberry", "Lorem ipsum", new Price()
-            {
-                ItemPrice =
-                  3,
-                Currency = Currency.Euro
-            }, UnitType.PerBox, 10);
+            ProductRepository productRepository = new();
+            inventory = productRepository.LoadProductsFromFile();
 
-            inventory.Add(p1);
-            inventory.Add(p2);
-            inventory.Add(p3);
+            Console.ForegroundColor= ConsoleColor.Green;
+            Console.WriteLine($"Loaded {inventory.Count} products!");
 
-            /*
-            try
-            {
-                string path = $"{directory}{productsFile}";
-                if(File.Exists(path))
-                {
-                    inventory.Clear();
+            Console.WriteLine("Press enter to continue.");
+            Console.ResetColor();
 
-                    string[] stockAsString = File.ReadAllLines(path);
-                    for (int i = 0; i < stockAsString.Length; i++)
-                    {
-                        string[] stockSplits = stockAsString[i].Split(';');
-                        string id = stockSplits[0].Substring(stockSplits[0].IndexOf(':') + 1);
-                        string name = stockSplits[1].Substring(stockSplits[1].IndexOf(':') + 1);
-                        string description = stockSplits[2].Substring(stockSplits[2].IndexOf(':') + 1);
-                        string price = stockSplits[3].Substring(stockSplits[3].IndexOf(':') + 1);
-                        string unitType = stockSplits[4].Substring(stockSplits[4].IndexOf(':') + 1);
-                        string maxStock = stockSplits[5].Substring(stockSplits[5].IndexOf(':') + 1);
-
-                        Product product = null;
-
-                        
-                    }
-
-                }
-                */
-        
+            Console.ReadLine();
         }
 
         private static void SaveAllData()
