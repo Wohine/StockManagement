@@ -10,18 +10,10 @@ namespace StockManagement.Domain
     {
         public static void Main(string[] args)
         {
-            WelcomeText();
+            Util.InitializeStock();
+            Util.WelcomeText();
+            Util.ActionMenu();
 
-
-        }
-
-        private static void WelcomeText()
-        {
-            Console.BackgroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Welcome to Stock Management");
-            Console.WriteLine($"Press enter key to start logging in!");
-            Console.ReadLine();
-            Console.ResetColor();
         }
     }
 }

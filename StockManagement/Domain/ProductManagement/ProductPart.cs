@@ -34,7 +34,7 @@ namespace StockManagement.Domain.ProductManagement
             }
         }
 
-        private string CreateSimpleProductRepresentation()
+        public string CreateSimpleProductRepresentation()
         {
             return $"Product {Id} ({Name})";
         }

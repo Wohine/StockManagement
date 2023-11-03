@@ -88,7 +88,7 @@ namespace StockManagement.Domain.ProductManagement
             }
         }
 
-        private string DisplayDetailsFull()
+        public string DisplayDetailsFull()
         {
             StringBuilder sb = new StringBuilder();
             //Todo: add price here too

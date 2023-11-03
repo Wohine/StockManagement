@@ -74,11 +74,20 @@ namespace StockManagement.Domain
         
         }
 
+        public static void WelcomeText()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Welcome to Stock Management");
+            Console.WriteLine($"Press enter key to start logging in!");
+            Console.ReadLine();
+            Console.ResetColor();
+        }
+
         public static void ActionMenu()
         {
             bool exitApp = false;
             Console.ResetColor();
-            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("********************");
             Console.WriteLine("* Select an option *");
             Console.WriteLine("********************");
@@ -87,9 +96,9 @@ namespace StockManagement.Domain
             do
             {
                 Console.Clear();
-                Console.BackgroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("What do you want to do?:");
-                Console.BackgroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"\n1: Inventory management");
                 Console.WriteLine($"\n2: Order management");
                 Console.WriteLine($"\n3: Settings");
@@ -101,26 +110,208 @@ namespace StockManagement.Domain
                 switch (input)
                 {
                     case "1":
-
+                        ShowInventoryManagementMenu();
                         break;
                     case "2":
-
+                        ShowOrderManagementMenu();
                         break;
                     case "3":
-
+                        ShowSettingsMenu();
                         break;
                     case "4":
-
+                        SaveAllData();
                         break;
                     case "0":
                         exitApp = true;
                         break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid selection. Please try again.");
+                        break;
                 }
             } while (!exitApp);
 
-
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Thank you for using StockManagement TM");
 
         }
+
+        private static void SaveAllData()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void ShowSettingsMenu()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void ShowOrderManagementMenu()
+        {
+            string? userSelection = string.Empty;
+
+            do
+            {
+                Console.ResetColor();
+                Console.Clear();
+                Console.WriteLine("********************");
+                Console.WriteLine("* Select an action *");
+                Console.WriteLine("********************");
+
+                Console.WriteLine("\n1: Open order overview");
+                Console.WriteLine("\n2: Add new order");
+                Console.WriteLine("\n0: Back to main menu");
+
+                Console.Write("Your selection");
+                userSelection = Console.ReadLine();
+
+                switch (userSelection)
+                {
+                    case "1":
+                        ShowOpenOrderOverview();
+                        break;
+                    case "2":
+                        ShowAddNewOrder();
+                        break;
+                    default: 
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input! Please try again.");
+                        break;
+                }
+
+            } while (userSelection != "0");
+        }
+
+        private static void ShowAddNewOrder()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void ShowInventoryManagementMenu()
+        {
+            string? userInput;
+            do
+            {
+                Console.ResetColor();
+                Console.Clear();
+                Console.WriteLine("************************");
+                Console.WriteLine("* Inventory management *");
+                Console.WriteLine("************************");
+
+                ShowAllProductsOverview();
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("What do you want to do?");
+                Console.ResetColor();
+
+                Console.WriteLine("1: View details of a product");
+                Console.WriteLine("2: Add new product");
+                Console.WriteLine("3: Clone product");
+                Console.WriteLine("4: View products with low stock");
+                Console.WriteLine("0: Back to main menu");
+
+                Console.Write("Your selection: ");
+
+                userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case "1":
+                        ShowDetailsAndUseProduct();
+                        break;
+                    case "2":
+                        //ShowCreateNewProduct
+                        break;
+                    case "3":
+                        //ShowCloneExistingProduct();
+                        break;
+                    case "4":
+                        ShowProductsLowOnStock();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid selection. Please try again.");
+                        break;
+
+                }
+
+            } while (userInput != "0");
+            Console.Clear();
+        }
+
+        private static void ShowProductsLowOnStock()
+        {
+            List<Product> lowStockProducts = inventory.Where(p => p.IsBelowStockThreshold).ToList();
+
+            if(lowStockProducts.Count > 0)
+            {
+                Console.WriteLine("The following items are low on stock. Order more soon!\n");
+
+                foreach (var product in lowStockProducts) 
+                {
+                    Console.WriteLine(product.CreateSimpleProductRepresentation());
+                    Console.WriteLine();
+                }
+            }
+            else { Console.WriteLine("No items are currently low on stock."); }
+
+            Console.ReadLine();
+        }
+
+        private static void ShowDetailsAndUseProduct()
+        {
+            string? userInput = string.Empty;
+            
+            Console.Write("Enter the ID of product: ");
+            string? selectedProductId = Console.ReadLine();
+
+            if (selectedProductId != null)
+            {
+                Product? selectedProduct = inventory.Where(p => p.Id == 
+                int.Parse(selectedProductId)).FirstOrDefault();
+
+                if(selectedProduct != null)
+                {
+                    Console.WriteLine(selectedProduct.DisplayDetailsFull());
+
+                    Console.WriteLine("\nWhat do you want to do?");
+                    Console.WriteLine("1: Use product");
+                    Console.WriteLine("0: Back to inventory overview");
+
+                    Console.Write("Your selection: ");
+                    userInput = Console.ReadLine();
+
+                    switch (userInput)
+                    {
+                        case "1":
+                            Console.WriteLine("How many products do you want to use?");
+                            int amount = int.Parse(userInput);
+                            selectedProduct.UseProduct(amount);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"{amount} {selectedProduct.UnitType} " +
+                                $"{selectedProduct.Name} spent");
+                            Console.ResetColor();
+                            break; 
+                        case "2":
+                            break;
+                        default: Console.WriteLine("Invalid selection. Please try again."); break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Non-existing product selected. Please try again.");
+                }
+            }
+        }
+
+        private static void ShowAllProductsOverview()
+        {
+            foreach (var product in inventory)
+            {
+                Console.WriteLine(product.CreateSimpleProductRepresentation());
+                Console.WriteLine();
+            }
+        }
+
         private static void ShowOpenOrderOverview()
         {
             //Check to handle fulfilled orders
@@ -160,7 +351,27 @@ namespace StockManagement.Domain
 
         private static void ShowFullFilledOrders()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Checking fulfilled orders.");
+            foreach (var order in orders)
+            {
+                if(!order.Fulfilled && order.OrderFulfilmentDate < DateTime.Now)
+                //Fulfil the order
+                {
+                    foreach (var orderItem in order.OrderItems)
+                    {
+                        Product? selectedProduct = inventory.Where(p => p.Id == orderItem.Id).FirstOrDefault();
+                        if (selectedProduct != null)
+                        {
+                            selectedProduct.IncreaseStock(orderItem.AmountOrdered);
+                        }
+                    }
+                    order.Fulfilled = true;
+                }
+            }
+
+            orders.RemoveAll(o => o.Fulfilled);
+
+            Console.WriteLine("Fulfilled orders checked");
         }
     }
 }
