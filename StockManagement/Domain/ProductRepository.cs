@@ -109,5 +109,27 @@ namespace StockManagement.Domain
 
             return products;
         }
+
+        public void SaveProducts(List<Product> products)
+        {
+            string path = $"{directory}{productsFileName}";
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (Product product in products)
+            {
+                stringBuilder.Append($"{product.Id};");
+                stringBuilder.Append($"{product.Name};");
+                stringBuilder.Append($"{product.Description};");
+                stringBuilder.Append($"{product.Price.ItemPrice};");
+                stringBuilder.Append($"{product.Price.Currency};");
+                stringBuilder.Append($"{product.UnitType};");
+                stringBuilder.Append($"{product.MaxStock};");
+
+                stringBuilder.Append(Environment.NewLine);
+            }
+            File.WriteAllText(path, stringBuilder.ToString());
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Saved products successfully");
+            Console.ResetColor();
+        }
     }
 }

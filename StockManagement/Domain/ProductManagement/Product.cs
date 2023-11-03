@@ -42,6 +42,10 @@ namespace StockManagement.Domain.ProductManagement
                 }
             }
         }
+        public int MaxStock
+        {
+            get; set;
+        }
         public int CurrentStock { get; private set; }
         public bool IsBelowStockThreshold { get; private set; }
         public UnitType UnitType { get; set; }

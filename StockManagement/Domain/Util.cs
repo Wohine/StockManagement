@@ -77,7 +77,7 @@ namespace StockManagement.Domain
 
         }
 
-        internal static void InitializeStock() //Mock implementation
+        internal static void InitializeStock()
         {
             ProductRepository productRepository = new();
             inventory = productRepository.LoadProductsFromFile();
@@ -93,7 +93,9 @@ namespace StockManagement.Domain
 
         private static void SaveAllData()
         {
-            throw new NotImplementedException();
+            ProductRepository productRepo = new();
+            productRepo.SaveProducts(inventory);
+
         }
 
         private static void ShowSettingsMenu()
@@ -242,7 +244,7 @@ namespace StockManagement.Domain
                         ShowDetailsAndUseProduct();
                         break;
                     case "2":
-                        //ShowCreateNewProduct
+                        ShowCreateNewProduct();
                         break;
                     case "3":
                         //ShowCloneExistingProduct();
@@ -258,6 +260,73 @@ namespace StockManagement.Domain
 
             } while (userInput != "0");
             Console.Clear();
+        }
+
+        private static void ShowCreateNewProduct()
+        {
+            CreateProduct(inventory);
+        }
+
+        public static void CreateProduct(List<Product> products)
+        {
+            var random = new Random();
+            string? userInput = string.Empty;
+
+            Console.Clear();
+            Console.WriteLine("Welcome to product registry.");
+            Console.WriteLine("What do you want to do?");
+            Console.WriteLine("\n1: Create new product");
+            Console.WriteLine("\n0: Go back");
+            Console.Write("Your choice: ");
+            userInput = Console.ReadLine();
+
+            if (userInput != "0" && userInput != string.Empty)
+            {
+                bool success = false;
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("************************");
+                Console.WriteLine("* Register new product *");
+                Console.WriteLine("************************\n\n");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+
+                Console.Write("\nEnter the name of the product: ");
+                string? name = Console.ReadLine();
+                if (name == null) { name = "undefined"; }
+
+                Console.Write("\nEnter a description of your product: ");
+                string? desc = Console.ReadLine();
+
+                Console.Write("\nEnter the price of the product: ");
+                double price = double.Parse(Console.ReadLine());
+
+                Console.Write("\nEnter the currency of the price of your product (USD, EURO, POUNDS): ");
+                success = Enum.TryParse(Console.ReadLine(), out Currency currency);
+                if (!success)
+                {
+                    currency = Currency.Dollar;
+                }
+
+                Console.Write("\nEnter the unit type of your product (PerItem, PerBox, PerKg): ");
+                success = Enum.TryParse(Console.ReadLine(), out UnitType unitType);
+                if (!success)
+                {
+                    currency = Currency.Dollar;
+                }
+
+                Console.Write("\nEnter the max stock of your product: ");
+                int maxStock = int.Parse(Console.ReadLine());
+                if (maxStock < 0) { maxStock = 10; }
+
+
+                Product product = new Product(id: random.Next(99999999), name, desc,
+                    new Price() { ItemPrice = price, Currency = currency }, unitType, maxStock);
+
+                products.Add(product);
+
+                Console.ResetColor();
+            }
         }
 
         private static void ShowProductsLowOnStock()
@@ -313,7 +382,7 @@ namespace StockManagement.Domain
                                 $"{selectedProduct.Name} spent");
                             Console.ResetColor();
                             break; 
-                        case "2":
+                        case "0":
                             break;
                         default: Console.WriteLine("Invalid selection. Please try again."); break;
                     }
@@ -323,6 +392,7 @@ namespace StockManagement.Domain
                     Console.WriteLine("Non-existing product selected. Please try again.");
                 }
             }
+            Console.ReadLine() ;
         }
 
         private static void ShowAllProductsOverview()
