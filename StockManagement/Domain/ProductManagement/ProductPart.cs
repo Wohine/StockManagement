@@ -9,15 +9,26 @@ namespace StockManagement.Domain.ProductManagement
 {
     public partial class Product
     {
+        public static int StockThreshold = 5;
+
+        public static void ChangeStockThreshold(int newStockThreshhold)
+        {
+            //We will only allow this to go through if the value is > 0
+            if (newStockThreshhold > 0)
+            {
+                StockThreshold = newStockThreshhold;
+            }
+        }
+
         private void Log(string message)
         {
             //Will be written to file
             Console.WriteLine(message);
         }
 
-        private void UpdateLowStock()
+        public void UpdateLowStock()
         {
-            if (CurrentStock < 10)//For now a fixed value
+            if (CurrentStock < StockThreshold)//For now a fixed value
             {
                 IsBelowStockThreshold = true;
             }

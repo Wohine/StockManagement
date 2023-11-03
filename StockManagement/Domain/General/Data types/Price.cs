@@ -16,6 +16,5 @@ namespace StockManagement.Stock.Data_types
         {
             return $"{ItemPrice} {Currency}";
         }
-
     }
 }

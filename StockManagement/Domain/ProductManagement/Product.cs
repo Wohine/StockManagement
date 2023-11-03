@@ -46,7 +46,7 @@ namespace StockManagement.Domain.ProductManagement
         public bool IsBelowStockThreshold { get; private set; }
         public UnitType UnitType { get; set; }
 
-        public Price? Price { get; private set; }
+        public Price? Price { get; set; }
 
         public Product(int id) : this(id, string.Empty)
         {
@@ -138,7 +138,7 @@ namespace StockManagement.Domain.ProductManagement
                     $" item(s) ordered that could not be stored.");
             }
 
-            if (CurrentStock > 10)
+            if (CurrentStock > StockThreshold)
             {
                 IsBelowStockThreshold = false;
             }
